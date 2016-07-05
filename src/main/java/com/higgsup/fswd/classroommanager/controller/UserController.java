@@ -8,10 +8,8 @@ import com.higgsup.fswd.classroommanager.model.Role;
 import com.higgsup.fswd.classroommanager.model.User;
 import com.higgsup.fswd.classroommanager.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -19,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
  * Created by Tu on 4/24/2016.
  */
 @RestController
+@SessionAttributes
 public class UserController {
     @Autowired
     private UserService userService;
@@ -28,12 +27,15 @@ public class UserController {
     @NoAuthentication
     @RequestMapping(value = "/signup", method = RequestMethod.POST)
     public User createUser(@RequestBody UserDTO user){
+
         return userService.createUser(user);
     }
 
     @NoAuthentication
     @RequestMapping(value = "/login" ,method = RequestMethod.POST)
     public UserDTO checkLogin(@RequestBody UserDTO user){
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.addObject("username", user.getUsername());
         return userService.doLogin(user);
     }
 

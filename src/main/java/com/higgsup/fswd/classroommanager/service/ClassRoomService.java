@@ -24,6 +24,7 @@ public class ClassRoomService {
     private UserRepository userRepository;
 
     public ClassRoomDTO createClassRoom(ClassRoomDTO classRoomDTO, String token) {
+
         User user = userRepository.findByToken(token);
 
         ClassRoom classRoom = new ClassRoom();
@@ -114,6 +115,7 @@ public class ClassRoomService {
     public List<ClassRoomDTO> getClassRoomOfStudent(String token) {
         User user = userRepository.findByToken(token);
         List<ClassRoom> classRooms = classRoomRepository.findByUser(user);
+
         List<ClassRoomDTO> classRoomDTOs = new ArrayList<ClassRoomDTO>();
         for (ClassRoom classRoom: classRooms){
             ClassRoomDTO classRoomDTO = new ClassRoomDTO();

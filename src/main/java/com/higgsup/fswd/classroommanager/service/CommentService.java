@@ -88,6 +88,7 @@ public class CommentService {
     public CommentDTO editCommentInPost(String token, Long commentId, CommentDTO commentDTO) {
         User user = userRepository.findByToken(token);
         Comment comment = commentRepository.findById(commentId);
+
         CommentDTO commentDTO1 = new CommentDTO();
 
         if(comment.getUser() == user){

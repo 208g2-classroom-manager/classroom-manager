@@ -4,7 +4,6 @@ import com.higgsup.fswd.classroommanager.controller.dto.ClassRoomDTO;
 import com.higgsup.fswd.classroommanager.controller.dto.UserDTO;
 import com.higgsup.fswd.classroommanager.model.ClassRoom;
 import com.higgsup.fswd.classroommanager.model.User;
-import com.higgsup.fswd.classroommanager.repository.ClassRoomRepository;
 import com.higgsup.fswd.classroommanager.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,16 +21,20 @@ public class UserService  {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private ClassRoomRepository classRoomRepository;
-
     public User createUser(UserDTO userDTO){
-        User user = new User();
-        user.setUsername(userDTO.getUsername());
-        user.setFullName(userDTO.getFullName());
-        user.setPassword(userDTO.getPassword());
-        user.setRole(userDTO.getRole());
-        return userRepository.save(user);
+        ///User user = new User();
+        User user1 = userRepository.findByUsername(userDTO.getUsername());
+        if (user1 == null) {
+            User user = new User();
+            user.setUsername(userDTO.getUsername());
+            user.setFullName(userDTO.getFullName());
+            user.setPassword(userDTO.getPassword());
+            user.setRole(userDTO.getRole());
+            return userRepository.save(user);
+        }else{
+            throw new NullPointerException("username da ton tai!");
+        }
+
     }
 
     public User findUserToken(String token){
@@ -43,19 +46,24 @@ public class UserService  {
         // 1. Generate token if not exist
         // 2. Set expired time for token
         User user = userRepository.findByUsername(userDTO.getUsername());
-        if (user.getToken() == null) {
-            user.setToken(UUID.randomUUID().toString());
-            user.setTokenExpiry(new Date(System.currentTimeMillis() + (1000 * 60 * 60 * 24)));
-        } else {
-            user.setTokenExpiry(new Date(System.currentTimeMillis() + (1000 * 60 * 60 * 24)));
+
+        if (userDTO.getPassword().equals(user.getPassword()) ){
+            if (user.getToken() == null) {
+                user.setToken(UUID.randomUUID().toString());
+                user.setTokenExpiry(new Date(System.currentTimeMillis() + (1000 * 60 * 60 * 24)));
+            } else {
+                user.setTokenExpiry(new Date(System.currentTimeMillis() + (1000 * 60 * 60 * 24)));
+            }
+            user = userRepository.save(user);
+            UserDTO result = new UserDTO();
+            result.setUsername(user.getUsername());
+            result.setFullName(user.getFullName());
+            result.setRole(user.getRole());
+            result.setToken(user.getToken());
+            return result;
+        }else{
+            throw new NullPointerException("sai username hoac password");
         }
-        user = userRepository.save(user);
-        UserDTO result = new UserDTO();
-        result.setUsername(user.getUsername());
-        result.setFullName(user.getFullName());
-        result.setRole(user.getRole());
-        result.setToken(user.getToken());
-        return result;
     }
 
     public UserDTO findUser(String token) {
