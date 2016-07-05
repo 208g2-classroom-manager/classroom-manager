@@ -129,6 +129,7 @@ public class ClassRoomService {
         ClassRoom classRoom = classRoomRepository.findById(id);
         User user = classRoom.getUser();
         UserDTO1 userDTO1 = new UserDTO1();
+
         userDTO1.setUsername(user.getUsername());
         userDTO1.setFullName(user.getFullName());
         userDTO1.setRole(user.getRole());
@@ -143,6 +144,7 @@ public class ClassRoomService {
             userDTO1s.add(userDTO111);
         }
         ClassRoomDTO1 classRoomDTO1 = new ClassRoomDTO1();
+        classRoomDTO1.setClassId(classRoom.getId());
         classRoomDTO1.setClassName(classRoom.getClassName());
         classRoomDTO1.setUserDTO1(userDTO1);
         classRoomDTO1.setUserDTO1s(userDTO1s);
